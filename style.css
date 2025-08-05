@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2em;
+  width:100vw;
+  height:100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#titleLogin {
+    text-align: center;
+}
+
+#enterLogin {
+    text-align: center;
+}
+
+#enterLogin > span:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}
+
+.line {
+  margin-bottom: 1em;
+}
+
+.terminal {
+  min-width:max-content;  
+  padding:5% 5%;
+}
+
+input {
+  background: black;
+  border: none;
+  color: white;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  width: 200px;
+}

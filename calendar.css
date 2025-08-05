@@ -1,0 +1,164 @@
+* {
+  box-sizing: border-box;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+body {
+  margin: 0;
+  padding: 2em;
+  background-color: black;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2em;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-calendar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 100%;
+}
+
+#calendar-title {
+  text-align: center;
+  margin-bottom: 1em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5em;
+}
+
+.day-name {
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #555;
+  padding-bottom: 0.3em;
+  line-height: 1.5em;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5em;
+  flex: 1;
+}
+
+.day {
+  text-align: center;
+  padding: 0.5em;
+  border: 0.2em dashed #444;
+  min-height: 3em;        /* set a fixed height (adjust as needed) */
+  height: 100%;
+  overflow: hidden;       /* prevent content from stretching the cell */
+  display: flex;          /* optional: centers content */
+  flex-direction: column;
+  justify-content: flex-start; /* top-align */
+  align-items: center;
+  white-space: pre-line;  /* allows \n in textContent to show line breaks */
+}
+
+
+.calendarButton {
+    cursor: pointer;
+}
+
+#messageDiv {
+    position: absolute;
+    width: 75%;
+    height: 75%;
+    max-height: 1000px;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    border: 2px dashed #444;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1% 1%;
+}
+
+#messageClose {
+    text-align: center;
+}
+
+#messageClose:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}
+
+#messageDiv > h1 {
+    text-transform: uppercase;
+    font-weight: normal;
+    letter-spacing: 5px;
+}
+
+#messageDiv > video {
+  flex-grow: 1;
+  width: 100%;
+  object-fit: contain; /* or contain if you don't want it to crop */
+  min-height: 0; /* This line is important in some browsers */
+}
+
+#messageDiv > img {
+  flex-grow: 1;
+  width: 100%;
+  object-fit: contain; /* or contain if you don't want it to crop */
+  min-height: 0; /* This line is important in some browsers */
+}
+
+#gallery {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden; /* or auto if you want to scroll horizontally */
+}
+
+#gallery > img {
+  flex: 1;
+  object-fit: contain;  /* or contain, depending on the look you want */
+  height: 100%;
+  width: 100%;
+}
+
+.open:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}
+
+#quiz {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#quiz > form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* optional: left-align content */
+  gap: 1rem;
+  width: fit-content;
+}
+
+#options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

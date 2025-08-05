@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>kalender</title>
+  <link rel="stylesheet" href="calendar.css">
+  <script src="https://kit.fontawesome.com/cda94c9886.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="terminal-calendar">
+    <div id="calendar-title"><span class="calendarButton" onclick="moveCalendar(-1)" id="leftButton">&lt-</span> August 2025 <span class="calendarButton" onclick="moveCalendar(1)" id="rightButton">-&gt</span></div>
+    <div class="calendar-header">
+      <div class="day-name">Ma</div>
+      <div class="day-name">Di</div>
+      <div class="day-name">Wo</div>
+      <div class="day-name">Do</div>
+      <div class="day-name">Vr</div>
+      <div class="day-name">Za</div>
+      <div class="day-name">Zo</div>
+    </div>
+    <div class="calendar-grid" id="calendar-grid">
+      <!-- 7 * 6 = 42 cells, filled in by JS -->
+    </div>
+  </div>
+
+  <script>
+    let displayedYear;
+    let displayedMonth;
+    const months = ["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"]
+
+    function displayMonth(year, month, user) {
+      displayedYear = year;
+      displayedMonth = month;
+
+      const monthName = document.getElementById('calendar-title')
+      monthName.innerHTML = `<span class="calendarButton" onclick="moveCalendar(-1)" id="leftButton">&lt-</span> ${months[month]} ${year} <span class="calendarButton" onclick="moveCalendar(1)" id="rightButton">-&gt</span>`
+
+      const calendarGrid = document.getElementById('calendar-grid');
+      calendarGrid.innerHTML = ''; // Clear previous
+
+      const daysInMonth = new Date(year, month + 1, 0).getDate(); // e.g., 31
+      const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
+
+      // Adjust to make Monday = 0, Sunday = 6
+      const startIndex = (firstDay + 6) % 7;
+
+      // Fill in up to 42 cells (6 weeks max)
+      for (let i = 0; i < 42; i++) {
+        let beforeCutoff = 0;
+        let afterCutoff = 99;
+        // Do august cutoff checks
+        if (year == 2025 && month == 7 && user == 'maria') {
+          beforeCutoff = 1 // CASPER MAAK DIT OPNIEUW 10!!!
+        } else if (year == 2026 && month == 7 && user == 'maria') {
+          afterCutoff = 10
+        } else if (year == 2025 && month == 7 && user == 'lucca') {
+          beforeCutoff = 17
+        } else if (year == 2026 && month == 7 && user == 'lucca') {
+          afterCutoff = 17
+        }
+
+        const cell = document.createElement('div');
+        cell.classList.add('day');
+
+        const dayNum = i - startIndex + 1;
+        if (i >= startIndex && dayNum <= daysInMonth && dayNum >= beforeCutoff && dayNum <= afterCutoff) {
+          cell.innerHTML = String(dayNum).padStart(2, '0');
+          if (isTodayOrEarlier(month,dayNum,year)) {
+            cell.classList.add('open')
+            cell.innerHTML += '<br><br><i class="fa-solid fa-lock-open" style="color: #b1e3b9;"></i>'
+            cell.onclick = () => viewDay(user,year,month,dayNum)
+          } else {
+            cell.innerHTML += '<br><br><i class="fa-solid fa-lock" style="color: #e3b1b1;"></i>'
+          }
+        } else {
+          cell.innerHTML = '__';
+        }
+
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    let user = localStorage.getItem('user')
+    
+    // Init code if right users
+    if (user == "maria" || user == "lucca") {
+      const d = new Date();
+      let month = d.getMonth(); // Returns 0-11
+      let year = d.getFullYear(); // Returns actual year
+
+      // Boundary checks
+      if (year < 2025) {year = 2025}
+      if (year > 2026) {year = 2026}
+      if (year == 2025) {
+        if (month < 7) {month = 7}
+      } else if (year == 2026) {
+        if (month > 7) {month = 7}
+      }
+
+      displayMonth(year,month,user)
+
+      // Hide arrows if necessary
+      document.getElementById("leftButton").style.visibility = 'visible'
+      document.getElementById("rightButton").style.visibility = 'visible'
+      if (year == 2025 && month == 7) {
+        document.getElementById("leftButton").style.visibility = 'hidden'
+      } else if (year == 2026 && month == 7) {
+        document.getElementById("rightButton").style.visibility = 'hidden'
+      }
+    }
+
+    function moveCalendar(delta) {
+      closeMessage()
+      displayedMonth += delta;
+      if (displayedMonth > 11) {
+        displayedMonth = 0
+        displayedYear += 1
+      } else if (displayedMonth < 0) {
+        displayedMonth = 11
+        displayedYear -= 1
+      }
+
+      // Boundary checks
+      if (displayedYear < 2025) {displayedYear = 2025}
+      if (displayedYear > 2026) {displayedYear = 2026}
+      if (displayedYear == 2025) {
+        if (displayedMonth < 7) {displayedMonth = 7}
+      } else if (displayedYear == 2026) {
+        if (displayedMonth > 7) {displayedMonth = 7}
+      }
+
+      displayMonth(displayedYear,displayedMonth,user)
+
+      // Hide arrows if necessary
+      document.getElementById("leftButton").style.visibility = 'visible'
+      document.getElementById("rightButton").style.visibility = 'visible'
+      if (displayedYear == 2025 && displayedMonth == 7) {
+        document.getElementById("leftButton").style.visibility = 'hidden'
+      } else if (displayedYear == 2026 && displayedMonth == 7) {
+        document.getElementById("rightButton").style.visibility = 'hidden'
+      }
+    }
+
+  function isTodayOrEarlier(month, day, year) {
+    const givenDate = new Date(year, month, day);
+    
+    // Strip time part to make an accurate comparison
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    return givenDate <= today;
+  }
+
+  async function viewDay(user, year, month, day) {
+    closeMessage()
+  const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  let message = null;
+
+  if (user === 'maria') {
+    try {
+      const response = await fetch('maria.json');
+      if (!response.ok) throw new Error('Failed to load JSON');
+
+      const messages = await response.json();
+      message = messages[date] || null;
+
+    } catch (error) {
+      console.error('Er ging iets fout:', error);
+      return null;
+    }
+  } else if (user === 'lucca') {
+    try {
+      const response = await fetch('lucca.json');
+      if (!response.ok) throw new Error('Failed to load JSON');
+
+      const messages = await response.json();
+      message = messages[date] || null;
+
+    } catch (error) {
+      console.error('Er ging iets fout:', error);
+      return null;
+    }
+  }
+
+  // Message display
+  absDiv = document.createElement("div")
+  absDiv.id = "messageDiv"
+  absDiv.innerHTML = `<span id="messageClose" onclick="closeMessage()">Sluiten</span><h1>${day} ${months[month]} ${year}</h1>`
+  absDiv.innerHTML += message
+  document.body.append(absDiv)
+}
+
+function closeMessage() {
+  if (document.getElementById("messageDiv")) {
+    document.getElementById("messageDiv").remove()
+  }
+}
+
+document.addEventListener('click', function (e) {
+  if (e.target.matches('button[data-answer]')) {
+    const correctAnswer = e.target.getAttribute('data-answer');
+    const selected = document.querySelector('input[name="quiz"]:checked');
+
+    if (!selected) {
+      alert('❓ Kies een antwoord!');
+      return;
+    }
+
+    if (selected.value === correctAnswer) {
+      alert('✅ Juist!');
+    } else {
+      alert('❌ Fout...');
+    }
+  }
+});
+
+  </script>
+</body>
+</html>

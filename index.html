@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="terminal" id="terminal">
+    <div class="line" id="titleLogin">login</div>
+    <div class="line">
+      <span>gebruiker: </span>
+      <input type="text" id="username" autofocus autocomplete="off" />
+    </div>
+    <div class="line">
+      <span>wachtwoord: </span>
+      <input type="password" id="password" autocomplete="off" />
+    </div>
+    <div class="line" id="enterLogin" onclick="login()"><br><span>enter</span></div>
+  </div>
+  <script>
+    function login() {
+        user = document.getElementById("username").value
+        pass = document.getElementById("password").value
+        console.log(`trying to login ${user} with password ${pass}`)
+
+        if (user == "maria" && pass == "michelangelover") {
+          localStorage.setItem('user', 'maria')
+          window.location.href = "calendar.html"
+        } else if (user == "lucca" && pass == "otti1708") {
+          localStorage.setItem('user', 'lucca')
+          window.location.href = "calendar.html"
+        } else {
+          if (document.getElementById("error")) {
+            document.getElementById("error").remove()
+          }
+          document.getElementById("username").value = ''
+          document.getElementById("password").value = ''
+          errorBox = document.createElement("div")
+          errorBox.id = "error"
+          errorBox.style.color = "red"
+          errorBox.innerHTML = "foute gebruiker/wachtwoord"
+          document.getElementById("terminal").append(errorBox)
+        }
+    }
+  </script>
+</body>
+</html>
