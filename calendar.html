@@ -211,6 +211,14 @@ document.addEventListener('click', function (e) {
     } else {
       alert('❌ Fout...');
     }
+  } else if (e.target.matches('button[data-contain]')) {
+    const toContain = e.target.getAttribute('data-contain')
+    const answer = document.querySelector('input[name="guess"]').value
+    if (answer.toLowerCase().includes(toContain.toLowerCase())) {
+      alert('✅ Juist!');
+    } else {
+      alert('❌ Fout...');
+    }
   }
 });
 
