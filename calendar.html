@@ -84,6 +84,7 @@
     
     // Init code if right users
     if (user == "maria" || user == "lucca") {
+      document.title = `kalender - ${user}`
       const d = new Date();
       let month = d.getMonth(); // Returns 0-11
       let year = d.getFullYear(); // Returns actual year
