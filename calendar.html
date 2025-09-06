@@ -8,7 +8,11 @@
 </head>
 <body>
   <div class="terminal-calendar">
-    <div id="calendar-title"><span class="calendarButton" onclick="moveCalendar(-1)" id="leftButton">&lt-</span> August 2025 <span class="calendarButton" onclick="moveCalendar(1)" id="rightButton">-&gt</span></div>
+    <div id="terminal-header">
+      <div id="calendar-scores"><span class="calendarButton" onclick="scoreboard()">SCOREBORD</span></div>
+      <div id="calendar-title"><span class="calendarButton" onclick="moveCalendar(-1)" id="leftButton">&lt-</span> August 2025 <span class="calendarButton" onclick="moveCalendar(1)" id="rightButton">-&gt</span></div>
+      <div id="calendar-credits"><span class="calendarButton" onclick="love()">MET ❤️ DOOR CASPER</span></div>
+    </div>
     <div class="calendar-header">
       <div class="day-name">Ma</div>
       <div class="day-name">Di</div>
@@ -195,6 +199,9 @@ function closeMessage() {
   if (document.getElementById("messageDiv")) {
     document.getElementById("messageDiv").remove()
   }
+  if (document.getElementById("scoreboard")) {
+    document.getElementById("scoreboard").remove()
+  }
 }
 
 document.addEventListener('click', function (e) {
@@ -222,6 +229,126 @@ document.addEventListener('click', function (e) {
     }
   }
 });
+
+function love() {
+  if (user === "maria") {
+    window.open("assets/thank-you-for-teaching-me-love.jpg", '_blank').focus();
+  } else if (user === 'lucca') {
+    window.open("assets/thank-you-for-being-you.jpg", '_blank').focus();
+  }
+}
+
+async function scoreboard() {
+  div = document.createElement("div")
+  div.id = "scoreboard"
+  div.innerHTML = `<span id="messageClose" onclick="closeMessage()">Sluiten</span>`
+
+  try {
+      const response = await fetch('score.json');
+      if (!response.ok) throw new Error('Failed to load JSON');
+
+      const messages = await response.json();
+      data = messages || null;
+
+    } catch (error) {
+      console.error('Er ging iets fout:', error);
+      return null;
+    }
+
+  // Build scoreboard (ChatGPT yeah)
+  const table = document.createElement("table");
+    table.style.width = "100%";
+    table.style.borderCollapse = "collapse";
+
+    // ---- Header ----
+    const headerRow = document.createElement("tr");
+    ["Uitdaging", "Datum", "Maria", "Lucca"].forEach(text => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        th.style.border = "1px solid #333";
+        th.style.padding = "6px";
+        th.style.textAlign = "left";
+        headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+    // ---- Body rows ----
+let totalMaria = 0;
+let totalLucca = 0;
+
+data.forEach(entry => {
+    const row = document.createElement("tr");
+
+    const titleCell = document.createElement("td");
+    titleCell.textContent = entry.title;
+    row.appendChild(titleCell);
+
+    const dateCell = document.createElement("td");
+    dateCell.textContent = entry.date;
+    row.appendChild(dateCell);
+
+    if (entry.maria === -1 && entry.lucca === -1) {
+        // Ongoing challenge → one merged cell
+        const ongoingCell = document.createElement("td");
+        ongoingCell.textContent = "???";
+        ongoingCell.style.textAlign = "center";
+        ongoingCell.colSpan = 2;
+        row.appendChild(ongoingCell);
+
+        [titleCell, dateCell, ongoingCell].forEach(cell => {
+            cell.style.border = "1px solid #333";
+            cell.style.padding = "6px";
+        });
+    } else {
+        // Normal scores
+        const mariaCell = document.createElement("td");
+        mariaCell.textContent = entry.maria;
+        row.appendChild(mariaCell);
+
+        const luccaCell = document.createElement("td");
+        luccaCell.textContent = entry.lucca;
+        row.appendChild(luccaCell);
+
+        [titleCell, dateCell, mariaCell, luccaCell].forEach(cell => {
+            cell.style.border = "1px solid #333";
+            cell.style.padding = "6px";
+        });
+
+        totalMaria += entry.maria;
+        totalLucca += entry.lucca;
+    }
+
+    table.appendChild(row);
+});
+
+    // ---- Totals row ----
+    const totalRow = document.createElement("tr");
+
+    const totalTitleCell = document.createElement("td");
+    totalTitleCell.textContent = "Totaal";
+    totalTitleCell.colSpan = 2;
+    totalRow.appendChild(totalTitleCell);
+
+    const totalMariaCell = document.createElement("td");
+    totalMariaCell.textContent = totalMaria;
+    totalRow.appendChild(totalMariaCell);
+
+    const totalLuccaCell = document.createElement("td");
+    totalLuccaCell.textContent = totalLucca;
+    totalRow.appendChild(totalLuccaCell);
+
+    [totalTitleCell, totalMariaCell, totalLuccaCell].forEach(cell => {
+        cell.style.border = "1px solid #333";
+        cell.style.padding = "6px";
+        cell.style.fontWeight = "bold";
+    });
+
+    table.appendChild(totalRow);
+
+    div.appendChild(table);
+
+  document.body.append(div)
+}
 
   </script>
 </body>
