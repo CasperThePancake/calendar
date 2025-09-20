@@ -238,45 +238,63 @@ function love() {
   }
 }
 
+function parseDate(ddmmyyyy) {
+  const [day, month, year] = ddmmyyyy.split("/").map(Number);
+  return new Date(year, month - 1, day); // months are 0-based
+}
+
 async function scoreboard() {
-  div = document.createElement("div")
-  div.id = "scoreboard"
-  div.innerHTML = `<span id="messageClose" onclick="closeMessage()">Sluiten</span>`
+  const div = document.createElement("div");
+  div.id = "scoreboard";
+  div.innerHTML = `<span id="messageClose" onclick="closeMessage()">Sluiten</span>`;
 
+  let data;
   try {
-      const response = await fetch('score.json');
-      if (!response.ok) throw new Error('Failed to load JSON');
+    const response = await fetch("score.json");
+    if (!response.ok) throw new Error("Failed to load JSON");
 
-      const messages = await response.json();
-      data = messages || null;
+    const messages = await response.json();
+    data = messages || [];
+  } catch (error) {
+    console.error("Er ging iets fout:", error);
+    return null;
+  }
 
-    } catch (error) {
-      console.error('Er ging iets fout:', error);
-      return null;
-    }
+  // today's date at midnight
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  // Build scoreboard (ChatGPT yeah)
+  // Build scoreboard
   const table = document.createElement("table");
-    table.style.width = "100%";
-    table.style.borderCollapse = "collapse";
+  table.style.width = "100%";
+  table.style.borderCollapse = "collapse";
 
-    // ---- Header ----
-    const headerRow = document.createElement("tr");
-    ["Uitdaging", "Datum", "Maria", "Lucca"].forEach(text => {
-        const th = document.createElement("th");
-        th.textContent = text;
-        th.style.border = "1px solid #333";
-        th.style.padding = "6px";
-        th.style.textAlign = "left";
-        headerRow.appendChild(th);
-    });
-    table.appendChild(headerRow);
+  // ---- Header ----
+  const headerRow = document.createElement("tr");
+  ["Uitdaging", "Datum", "Maria", "Lucca"].forEach((text) => {
+    const th = document.createElement("th");
+    th.textContent = text;
+    th.style.border = "1px solid #333";
+    th.style.padding = "6px";
+    th.style.textAlign = "left";
+    headerRow.appendChild(th);
+  });
+  table.appendChild(headerRow);
 
-    // ---- Body rows ----
-let totalMaria = 0;
-let totalLucca = 0;
+  // ---- Body rows ----
+  let totalMaria = 0;
+  let totalLucca = 0;
 
-data.forEach(entry => {
+  data.forEach((entry) => {
+    // check if entry date is today or in the past
+    // check if entry date is today or in the past
+  const entryDate = parseDate(entry.date);
+  entryDate.setHours(0, 0, 0, 0);
+
+  if (entryDate > today) {
+    return; // skip this challenge (still in the future)
+  }
+
     const row = document.createElement("tr");
 
     const titleCell = document.createElement("td");
@@ -288,67 +306,68 @@ data.forEach(entry => {
     row.appendChild(dateCell);
 
     if (entry.maria === -1 && entry.lucca === -1) {
-        // Ongoing challenge → one merged cell
-        const ongoingCell = document.createElement("td");
-        ongoingCell.textContent = "???";
-        ongoingCell.style.textAlign = "center";
-        ongoingCell.colSpan = 2;
-        row.appendChild(ongoingCell);
+      // Ongoing challenge → one merged cell
+      const ongoingCell = document.createElement("td");
+      ongoingCell.textContent = "???";
+      ongoingCell.style.textAlign = "center";
+      ongoingCell.colSpan = 2;
+      row.appendChild(ongoingCell);
 
-        [titleCell, dateCell, ongoingCell].forEach(cell => {
-            cell.style.border = "1px solid #333";
-            cell.style.padding = "6px";
-        });
+      [titleCell, dateCell, ongoingCell].forEach((cell) => {
+        cell.style.border = "1px solid #333";
+        cell.style.padding = "6px";
+      });
     } else {
-        // Normal scores
-        const mariaCell = document.createElement("td");
-        mariaCell.textContent = entry.maria;
-        row.appendChild(mariaCell);
+      // Normal scores
+      const mariaCell = document.createElement("td");
+      mariaCell.textContent = entry.maria;
+      row.appendChild(mariaCell);
 
-        const luccaCell = document.createElement("td");
-        luccaCell.textContent = entry.lucca;
-        row.appendChild(luccaCell);
+      const luccaCell = document.createElement("td");
+      luccaCell.textContent = entry.lucca;
+      row.appendChild(luccaCell);
 
-        [titleCell, dateCell, mariaCell, luccaCell].forEach(cell => {
-            cell.style.border = "1px solid #333";
-            cell.style.padding = "6px";
-        });
+      [titleCell, dateCell, mariaCell, luccaCell].forEach((cell) => {
+        cell.style.border = "1px solid #333";
+        cell.style.padding = "6px";
+      });
 
-        totalMaria += entry.maria;
-        totalLucca += entry.lucca;
+      totalMaria += entry.maria;
+      totalLucca += entry.lucca;
     }
 
     table.appendChild(row);
-});
+  });
 
-    // ---- Totals row ----
-    const totalRow = document.createElement("tr");
+  // ---- Totals row ----
+  const totalRow = document.createElement("tr");
 
-    const totalTitleCell = document.createElement("td");
-    totalTitleCell.textContent = "Totaal";
-    totalTitleCell.colSpan = 2;
-    totalRow.appendChild(totalTitleCell);
+  const totalTitleCell = document.createElement("td");
+  totalTitleCell.textContent = "Totaal";
+  totalTitleCell.colSpan = 2;
+  totalRow.appendChild(totalTitleCell);
 
-    const totalMariaCell = document.createElement("td");
-    totalMariaCell.textContent = totalMaria;
-    totalRow.appendChild(totalMariaCell);
+  const totalMariaCell = document.createElement("td");
+  totalMariaCell.textContent = totalMaria;
+  totalRow.appendChild(totalMariaCell);
 
-    const totalLuccaCell = document.createElement("td");
-    totalLuccaCell.textContent = totalLucca;
-    totalRow.appendChild(totalLuccaCell);
+  const totalLuccaCell = document.createElement("td");
+  totalLuccaCell.textContent = totalLucca;
+  totalRow.appendChild(totalLuccaCell);
 
-    [totalTitleCell, totalMariaCell, totalLuccaCell].forEach(cell => {
-        cell.style.border = "1px solid #333";
-        cell.style.padding = "6px";
-        cell.style.fontWeight = "bold";
-    });
+  [totalTitleCell, totalMariaCell, totalLuccaCell].forEach((cell) => {
+    cell.style.border = "1px solid #333";
+    cell.style.padding = "6px";
+    cell.style.fontWeight = "bold";
+  });
 
-    table.appendChild(totalRow);
+  table.appendChild(totalRow);
 
-    div.appendChild(table);
+  div.appendChild(table);
 
-  document.body.append(div)
+  document.body.append(div);
 }
+
 
   </script>
 </body>
