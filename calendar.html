@@ -230,13 +230,49 @@ document.addEventListener('click', function (e) {
   }
 });
 
-function love() {
-  if (user === "maria") {
-    window.open("assets/thank-you-for-teaching-me-love.jpg", '_blank').focus();
-  } else if (user === 'lucca') {
-    window.open("assets/thank-you-for-being-you.jpg", '_blank').focus();
-  }
-}
+    function love() {
+      let title = "";
+      let relativePath = "";
+
+      if (user === "maria") {
+        title = "Thank you for teaching me love";
+        relativePath = "assets/thank-you-for-teaching-me-love.jpg";
+      } else if (user === "lucca") {
+        title = "Thank you for your warmth";
+        relativePath = "assets/thank-you-for-your-warmth.jpeg";
+      }
+
+      if (title) {
+        // This magic line turns "assets/img.jpg" into the full localhost:63342/.../assets/img.jpg
+        const absoluteImgUrl = new URL(relativePath, window.location.href).href;
+
+        const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${title}</title>
+          <style>
+            body {
+              display: flex; flex-direction: column; align-items: center;
+              justify-content: center; height: 100vh; margin: 0;
+              font-family: system-ui, sans-serif; background: #dc4949;
+            }
+            h1 { color: #000000; }
+            img { max-width: 80vw; max-height: 70vh; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+          </style>
+        </head>
+        <body>
+          <h1>${title}</h1>
+          <img src="${absoluteImgUrl}" alt="Special Image">
+        </body>
+      </html>
+    `;
+
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+      }
+    }
 
 function parseDate(ddmmyyyy) {
   const [day, month, year] = ddmmyyyy.split("/").map(Number);
