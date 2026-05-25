@@ -10,5 +10,5 @@
     {"title": "Roemeens gezelschapsspelletje", "date": "01/02/2026", "maria": 1, "lucca": 7},
     {"title": "Kotfoodreview", "date": "08/02/2026", "maria": 7, "lucca": 10},
     {"title": "Hidden place", "date": "12/04/2026", "maria":  0, "lucca":  8},
-    {"title": "Eurovision (no boycott)", "date": "15/05/2026", "maria": -1, "lucca": -1}
+    {"title": "Eurovision (no boycott)", "date": "15/05/2026", "maria": 0, "lucca": 0}
 ]
